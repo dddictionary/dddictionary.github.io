@@ -1,6 +1,9 @@
 name: Continuous deployment
 on:
-  branches: [main]
+  workflow_run:
+    branches: [main]
+    workflows: [Continuous integration]
+    types: [completed]
 
 jobs:
   release:
@@ -19,6 +22,7 @@ jobs:
       - run: trunk build --release --public-url /${{ github.event.repository.name }}/
 
       - uses: peaceiris/actions-gh-pages@v3
+        if: github.ref == 'refs/heads/main'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
